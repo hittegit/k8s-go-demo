@@ -5,7 +5,7 @@ bin/
 # Go build cache
 *.test
 *.out
-server
+/server
 vendor/
 
 # Helm

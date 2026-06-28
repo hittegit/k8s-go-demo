@@ -8,14 +8,19 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 // healthResponse is the JSON payload returned by the /health endpoint.
@@ -65,6 +70,21 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
+	ctx := context.Background()
+
+	shutdownTracing, err := setupTracing(ctx)
+	if err != nil {
+		slog.Error("failed to set up tracing", "error", err)
+		os.Exit(1)
+	}
+	defer func() {
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := shutdownTracing(shutdownCtx); err != nil {
+			slog.Error("failed to shut down tracing", "error", err)
+		}
+	}()
+
 	// PORT can be overridden via environment variable, making it easy
 	// to configure in Kubernetes via a ConfigMap or Deployment env block.
 	port := os.Getenv("PORT")
@@ -80,10 +100,30 @@ func main() {
 	// and Prometheus will scrape this endpoint for runtime metrics.
 	mux.Handle("/metrics", promhttp.Handler())
 
-	slog.Info("server starting", "port", port)
+	handler := otelhttp.NewHandler(mux, serviceName)
 
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
-		slog.Error("server failed", "error", err)
-		os.Exit(1)
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: handler,
+	}
+
+	go func() {
+		slog.Info("server starting", "port", port)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("server failed", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	<-stop
+
+	slog.Info("server shutting down")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		slog.Error("graceful shutdown failed", "error", err)
 	}
 }
