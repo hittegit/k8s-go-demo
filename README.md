@@ -42,7 +42,7 @@ using a minimal Go HTTP service as the application under deployment. It covers:
 
 ## Prerequisites
 
-- [Go 1.24+](https://go.dev/dl/)
+- [Go 1.25+](https://go.dev/dl/)
 - [Docker](https://docs.docker.com/get-docker/)
 - [minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
@@ -62,7 +62,6 @@ using a minimal Go HTTP service as the application under deployment. It covers:
           Chart.yaml      - Helm chart metadata
           values.yaml     - Default chart values
           templates/      - Kubernetes manifest templates
-      vendor/             - Vendored Go dependencies
       Dockerfile          - Multi-stage container build
       README.md
 
@@ -72,7 +71,7 @@ using a minimal Go HTTP service as the application under deployment. It covers:
 
 ### Run Locally
 
-    go run cmd/server/main.go
+    go run ./cmd/server
     curl http://localhost:8080/health
 
 ### Build Docker Image

@@ -55,7 +55,7 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
 ## Local Development
 
     # Run server locally
-    go run cmd/server/main.go
+    go run ./cmd/server
 
     # Run tests
     go test ./...
