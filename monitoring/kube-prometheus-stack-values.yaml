@@ -1,0 +1,72 @@
+# kube-prometheus-stack-values.yaml
+#
+# Override values for the prometheus-community/kube-prometheus-stack chart,
+# sized for a local minikube cluster rather than production.
+#
+# Install with:
+#   helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+#     --namespace monitoring --create-namespace \
+#     -f monitoring/kube-prometheus-stack-values.yaml
+
+prometheus:
+  prometheusSpec:
+    # Select ServiceMonitors/PodMonitors/Probes across all namespaces and
+    # all labels, instead of requiring a `release: <helm-release-name>`
+    # label. Simplifies wiring up go-demo's ServiceMonitor.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    retention: 24h
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
+
+grafana:
+  adminPassword: admin
+  sidecar:
+    dashboards:
+      enabled: true
+      # go-demo's dashboard ConfigMap lives in the `demo` namespace, not
+      # the monitoring stack's namespace.
+      searchNamespace: ALL
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  persistence:
+    enabled: true
+    storageClassName: standard
+    size: 1Gi
+
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi

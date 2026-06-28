@@ -1,0 +1,7 @@
+# .markdownlint.yaml
+#
+# MD024 with siblings_only allows repeated headings like "### Added" across
+# different CHANGELOG.md version sections, while still catching genuine
+# duplicate headings within the same section.
+MD024:
+  siblings_only: true
