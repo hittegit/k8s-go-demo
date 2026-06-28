@@ -60,7 +60,9 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	httpRequestsTotal.WithLabelValues(r.Method, "/").Inc()
 	slog.Info("root request", "method", r.Method, "path", r.URL.Path)
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("k8s-go-demo is running\n"))
+	if _, err := w.Write([]byte("k8s-go-demo is running\n")); err != nil {
+		slog.Error("failed to write root response", "error", err)
+	}
 }
 
 func main() {

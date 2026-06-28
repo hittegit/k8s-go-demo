@@ -18,7 +18,7 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
 
 ## Tech Stack
 
-- **Language:** Go 1.24
+- **Language:** Go 1.25
 - **Container:** Docker, multi-stage build, scratch base image
 - **Orchestration:** Kubernetes via minikube (local)
 - **Packaging:** Helm 3
