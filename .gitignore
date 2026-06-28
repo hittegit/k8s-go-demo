@@ -5,6 +5,8 @@ bin/
 # Go build cache
 *.test
 *.out
+server
+vendor/
 
 # Helm
 charts/*/charts/

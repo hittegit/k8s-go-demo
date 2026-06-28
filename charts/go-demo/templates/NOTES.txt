@@ -1,0 +1,5 @@
+1. Get the application URL by running:
+   kubectl port-forward svc/{{ include "go-demo.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+
+2. Then visit:
+   http://localhost:8080/health
