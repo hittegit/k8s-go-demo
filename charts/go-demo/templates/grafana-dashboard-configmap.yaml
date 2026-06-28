@@ -1,0 +1,12 @@
+{{- if .Values.grafanaDashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "go-demo.fullname" . }}-dashboard
+  labels:
+    {{- include "go-demo.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  go-demo.json: |
+    {{- .Files.Get "dashboards/go-demo.json" | nindent 4 }}
+{{- end }}

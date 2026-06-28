@@ -59,6 +59,18 @@ readinessProbe:
 autoscaling:
   enabled: false
 
+# Requires the Prometheus Operator CRDs (installed by kube-prometheus-stack).
+# Disable if installing go-demo into a cluster without the monitoring stack.
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  path: /metrics
+
+# Provisions a Grafana dashboard via a labeled ConfigMap, auto-discovered by
+# the kube-prometheus-stack Grafana sidecar. Requires the monitoring stack.
+grafanaDashboard:
+  enabled: true
+
 volumes: []
 volumeMounts: []
 nodeSelector: {}

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Prometheus and Grafana via the kube-prometheus-stack Helm chart, installed
+  into a dedicated `monitoring` namespace
+- `ServiceMonitor` in the go-demo chart for Prometheus Operator scrape
+  discovery
+- Grafana dashboard for go-demo, auto-provisioned via a labeled ConfigMap
+
 ## [0.1.0] - 2026-06-28
 
 ### Added

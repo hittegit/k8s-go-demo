@@ -116,9 +116,34 @@ Observability is implemented via three complementary tools:
 - **Prometheus** - scrapes and stores metrics exposed at `/metrics`
 - **Grafana** - visualizes Prometheus metrics via dashboards
 
-Both Prometheus and Grafana are installed into the cluster via their
-official Helm charts. Setup instructions will be added as the observability
-stack is integrated.
+Prometheus and Grafana run in the cluster via the
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+Helm chart, installed into a dedicated `monitoring` namespace:
+
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+    helm install kube-prometheus-stack \
+      prometheus-community/kube-prometheus-stack \
+      --namespace monitoring --create-namespace \
+      -f monitoring/kube-prometheus-stack-values.yaml
+
+The `go-demo` chart includes a `ServiceMonitor` (so Prometheus Operator
+discovers and scrapes the `/metrics` endpoint) and a Grafana dashboard
+ConfigMap (auto-discovered by the Grafana sidecar via the
+`grafana_dashboard: "1"` label). Both are enabled by default and require
+the monitoring stack above to already be installed; disable them with
+`--set serviceMonitor.enabled=false --set grafanaDashboard.enabled=false`
+when installing go-demo into a cluster without it.
+
+**Access Grafana:**
+
+    kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+    # http://localhost:3000, default login admin/admin (see values file)
+
+**Access Prometheus:**
+
+    kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+    # http://localhost:9090
 
 ---
 

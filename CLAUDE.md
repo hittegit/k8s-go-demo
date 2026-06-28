@@ -22,7 +22,7 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
 - **Container:** Docker, multi-stage build, scratch base image
 - **Orchestration:** Kubernetes via minikube (local)
 - **Packaging:** Helm 3
-- **Observability:** Prometheus, Grafana, OpenTelemetry (in progress)
+- **Observability:** Prometheus, Grafana (via kube-prometheus-stack), OpenTelemetry
 - **CI:** GitHub Actions
 - **Dependency updates:** Renovate
 - **Repo hygiene:** Yardstick v0.4.0
@@ -38,11 +38,17 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
         go-demo/
           Chart.yaml
           values.yaml
+          dashboards/
+            go-demo.json    - Grafana dashboard, provisioned via ConfigMap
           templates/
             deployment.yaml
             service.yaml
+            servicemonitor.yaml          - Prometheus Operator scrape config
+            grafana-dashboard-configmap.yaml
             _helpers.tpl
             NOTES.txt
+      monitoring/
+        kube-prometheus-stack-values.yaml - Prometheus + Grafana, sized for minikube
       .github/
         workflows/
           ci.yml          - Lint, vet, test, build, Docker build, Helm lint,
@@ -66,7 +72,9 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
     # Load image into minikube
     minikube image load k8s-go-demo:local
 
-    # Deploy via Helm
+    # Deploy via Helm (requires kube-prometheus-stack installed first,
+    # see Observability below, or pass --set serviceMonitor.enabled=false
+    # --set grafanaDashboard.enabled=false)
     helm install go-demo charts/go-demo --namespace demo --create-namespace
 
     # Port forward and test
@@ -76,6 +84,31 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
 
     # Teardown
     helm uninstall go-demo -n demo
+
+## Observability Stack
+
+    # One-time: install Prometheus + Grafana via kube-prometheus-stack
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+    helm install kube-prometheus-stack \
+      prometheus-community/kube-prometheus-stack \
+      --namespace monitoring --create-namespace \
+      -f monitoring/kube-prometheus-stack-values.yaml
+
+    # Grafana (admin/admin by default, see values file)
+    kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+
+    # Prometheus
+    kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+
+**Pitfall:** `minikube image load <tag>` is a no-op if a running container
+already holds a reference to the old image under that tag. Scale the
+deployment to 0 first, reload the image, then scale back up:
+
+    kubectl scale deployment go-demo -n demo --replicas=0
+    minikube image rm k8s-go-demo:local
+    minikube image load k8s-go-demo:local
+    kubectl scale deployment go-demo -n demo --replicas=1
 
 ## Key Endpoints
 
@@ -108,7 +141,4 @@ Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston 
 
 ## Upcoming Work
 
-- Complete OpenTelemetry tracing instrumentation
-- Install Prometheus and Grafana via Helm into minikube
-- Wire Grafana dashboards to Prometheus datasource
 - Add GitHub Actions CD workflow
