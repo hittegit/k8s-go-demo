@@ -41,6 +41,12 @@ grafana:
       # go-demo's dashboard ConfigMap lives in the `demo` namespace, not
       # the monitoring stack's namespace.
       searchNamespace: ALL
+  additionalDataSources:
+    - name: Tempo
+      type: tempo
+      access: proxy
+      url: http://tempo.monitoring.svc.cluster.local:3200
+      isDefault: false
   resources:
     requests:
       cpu: 50m

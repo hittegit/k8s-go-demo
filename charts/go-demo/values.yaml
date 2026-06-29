@@ -71,6 +71,13 @@ serviceMonitor:
 grafanaDashboard:
   enabled: true
 
+# Where the app exports OpenTelemetry traces via OTLP/HTTP. Defaults to the
+# in-cluster otel-collector Service. Set to "" to disable (the app falls
+# back to the OTel SDK's default of localhost:4318, which will just fail
+# to connect and log an error on shutdown).
+otel:
+  endpoint: "http://otel-collector.monitoring.svc.cluster.local:4318"
+
 volumes: []
 volumeMounts: []
 nodeSelector: {}
