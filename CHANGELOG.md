@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0] - 2026-06-28
 
 ### Added
 
@@ -9,6 +9,11 @@
 - `ServiceMonitor` in the go-demo chart for Prometheus Operator scrape
   discovery
 - Grafana dashboard for go-demo, auto-provisioned via a labeled ConfigMap
+
+### Fixed
+
+- Chart.yaml's leftover `helm create` placeholder `appVersion` (was
+  `1.16.0`, unrelated to this project)
 
 ## [0.1.0] - 2026-06-28
 
