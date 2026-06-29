@@ -1,0 +1,41 @@
+# otel-collector-values.yaml
+#
+# Override values for the open-telemetry/opentelemetry-collector chart,
+# sized for a local minikube cluster. Receives OTLP traces from go-demo
+# and forwards them to Tempo.
+#
+# Install with:
+#   helm install otel-collector open-telemetry/opentelemetry-collector \
+#     --namespace monitoring --create-namespace \
+#     -f monitoring/otel-collector-values.yaml
+
+mode: deployment
+fullnameOverride: otel-collector
+
+image:
+  repository: otel/opentelemetry-collector
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+config:
+  exporters:
+    otlp/tempo:
+      endpoint: tempo.monitoring.svc.cluster.local:4317
+      tls:
+        insecure: true
+  service:
+    pipelines:
+      traces:
+        # Keep the default `debug` exporter alongside `otlp/tempo` so
+        # received spans are visible in `kubectl logs` for troubleshooting.
+        exporters:
+          - debug
+          - otlp/tempo

@@ -49,6 +49,8 @@ Erik Hitt - Platform and DevOps Engineer
             NOTES.txt
       monitoring/
         kube-prometheus-stack-values.yaml - Prometheus + Grafana, sized for minikube
+        otel-collector-values.yaml        - OTel Collector, forwards traces to Tempo
+        tempo-values.yaml                 - Tempo (single-binary), sized for minikube
       .github/
         workflows/
           ci.yml          - Lint, vet, test, build, Docker build, Helm lint,
@@ -100,6 +102,22 @@ Erik Hitt - Platform and DevOps Engineer
 
     # Prometheus
     kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+
+    # One-time: install Tempo + OTel Collector for traces
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+    helm repo update
+    helm install tempo grafana/tempo \
+      --namespace monitoring --create-namespace \
+      -f monitoring/tempo-values.yaml
+    helm install otel-collector open-telemetry/opentelemetry-collector \
+      --namespace monitoring --create-namespace \
+      -f monitoring/otel-collector-values.yaml
+
+    # go-demo's OTEL_EXPORTER_OTLP_ENDPOINT (values.yaml otel.endpoint)
+    # points at the in-cluster collector by default. Query traces directly:
+    kubectl port-forward -n monitoring svc/tempo 3200:3200
+    curl "http://localhost:3200/api/search?tags=service.name%3Dk8s-go-demo"
 
 **Pitfall:** `minikube image load <tag>` is a no-op if a running container
 already holds a reference to the old image under that tag. Scale the

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- OpenTelemetry Collector, receiving OTLP traces from go-demo and
+  forwarding them to Grafana Tempo
+- Grafana Tempo (single-binary mode), wired into Grafana as a datasource
+  so traces are queryable in the same UI as Prometheus metrics
+- `OTEL_EXPORTER_OTLP_ENDPOINT` env var on the go-demo Deployment,
+  pointing at the in-cluster collector by default
+
 ## [0.2.0] - 2026-06-28
 
 ### Added
