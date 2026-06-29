@@ -164,9 +164,9 @@ Tests use only the standard library `net/http/httptest` package and cover:
 Pipelines are defined in `.github/workflows/` and run on every push and
 pull request.
 
-| Workflow | Trigger  | Steps                                                         |
-|----------|----------|---------------------------------------------------------------|
-| `ci.yml` | Push, PR | Lint, vet, test, build, Docker build, Helm lint, repo hygiene |
+| Workflow | Trigger  | Steps                                       |
+|----------|----------|---------------------------------------------|
+| `ci.yml` | Push, PR | Lint, vet, test, build, Docker, Helm lint   |
 
 > Pipeline status badges are shown at the top of this README. They will
 > activate once the workflow files are committed and a pipeline run completes.

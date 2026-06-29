@@ -14,7 +14,7 @@ and DevOps/SRE interview prep.
 
 ## Owner
 
-Erik Hitt - Platform and DevOps Engineer, Barrios Technology, NASA FOD, Houston TX.
+Erik Hitt - Platform and DevOps Engineer
 
 ## Tech Stack
 
