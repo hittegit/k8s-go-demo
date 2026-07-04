@@ -148,6 +148,17 @@ deployment to 0 first, reload the image, then scale back up:
 - repo-hygiene - yardstick v0.4.0 strict mode
 - sbom - syft CycloneDX SBOM generation
 
+## Local Validation
+
+Run before committing or opening a PR:
+
+    go test -race ./...
+    go vet ./...
+    gofmt -l ./cmd/server
+    markdownlint '*.md'
+    yamllint .github/workflows/*.yml .markdownlint.yaml .yamllint.yaml monitoring/*.yaml charts/go-demo/values.yaml
+    helm lint charts/go-demo
+
 ## Coding Standards
 
 - Format all Go code with gofmt before committing.
@@ -155,6 +166,7 @@ deployment to 0 first, reload the image, then scale back up:
 - All new endpoints must be covered by tests in main_test.go.
 - No em dashes in any output or comments, use commas or hyphens.
 - Follow markdownlint rules in all Markdown files.
+- Follow yamllint rules (configured in .yamllint.yaml) in all YAML files.
 - Never include git commit or git push commands unless explicitly asked.
 
 ## Upcoming Work

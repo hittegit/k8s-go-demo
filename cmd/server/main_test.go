@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/prometheus/client_golang/prometheus/testutil"
 )
 
 // TestHealthHandler verifies the /health endpoint returns 200 OK
@@ -62,5 +64,47 @@ func TestHealthHandlerContentType(t *testing.T) {
 	ct := rec.Header().Get("Content-Type")
 	if ct != "application/json" {
 		t.Errorf("expected Content-Type 'application/json', got '%s'", ct)
+	}
+}
+
+// TestRootHandlerBody verifies the root handler returns the exact expected text.
+func TestRootHandlerBody(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+
+	rootHandler(rec, req)
+
+	got := rec.Body.String()
+	want := "k8s-go-demo is running\n"
+	if got != want {
+		t.Errorf("body = %q, want %q", got, want)
+	}
+}
+
+// TestHealthHandlerIncrementsCounter verifies that /health increments
+// the http_requests_total Prometheus counter on each call.
+func TestHealthHandlerIncrementsCounter(t *testing.T) {
+	before := testutil.ToFloat64(httpRequestsTotal.WithLabelValues("GET", "/health"))
+
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	healthHandler(httptest.NewRecorder(), req)
+
+	after := testutil.ToFloat64(httpRequestsTotal.WithLabelValues("GET", "/health"))
+	if after-before != 1 {
+		t.Errorf("counter delta = %v, want 1", after-before)
+	}
+}
+
+// TestRootHandlerIncrementsCounter verifies that / increments
+// the http_requests_total Prometheus counter on each call.
+func TestRootHandlerIncrementsCounter(t *testing.T) {
+	before := testutil.ToFloat64(httpRequestsTotal.WithLabelValues("GET", "/"))
+
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rootHandler(httptest.NewRecorder(), req)
+
+	after := testutil.ToFloat64(httpRequestsTotal.WithLabelValues("GET", "/"))
+	if after-before != 1 {
+		t.Errorf("counter delta = %v, want 1", after-before)
 	}
 }

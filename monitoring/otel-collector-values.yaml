@@ -9,6 +9,7 @@
 #     --namespace monitoring --create-namespace \
 #     -f monitoring/otel-collector-values.yaml
 
+file_format: yaml
 mode: deployment
 fullnameOverride: otel-collector
 

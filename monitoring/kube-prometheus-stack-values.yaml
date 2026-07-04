@@ -4,7 +4,8 @@
 # sized for a local minikube cluster rather than production.
 #
 # Install with:
-#   helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+#   helm install kube-prometheus-stack \
+#     prometheus-community/kube-prometheus-stack \
 #     --namespace monitoring --create-namespace \
 #     -f monitoring/kube-prometheus-stack-values.yaml
 

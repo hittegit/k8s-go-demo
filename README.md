@@ -55,13 +55,20 @@ using a minimal Go HTTP service as the application under deployment. It covers:
     k8s-go-demo/
       cmd/
         server/
-          main.go         - HTTP server entry point
-          main_test.go    - Unit tests
+          main.go         - HTTP server, /health, /, /metrics endpoints
+          main_test.go    - Unit tests using net/http/httptest
+          tracing.go      - OpenTelemetry TracerProvider setup
       charts/
         go-demo/
           Chart.yaml      - Helm chart metadata
           values.yaml     - Default chart values
+          dashboards/
+            go-demo.json  - Grafana dashboard, provisioned via ConfigMap
           templates/      - Kubernetes manifest templates
+      monitoring/
+        kube-prometheus-stack-values.yaml - Prometheus and Grafana, sized for minikube
+        otel-collector-values.yaml        - OTel Collector, forwards traces to Tempo
+        tempo-values.yaml                 - Tempo trace storage, sized for minikube
       Dockerfile          - Multi-stage container build
       README.md
 
@@ -95,8 +102,13 @@ Kubernetes resources:
 
 - `Deployment` - runs the Go service with configurable replicas
 - `Service` - exposes the deployment within the cluster
-- `ConfigMap` - injects environment configuration
-- `Ingress` - routes external traffic (optional)
+- `ServiceMonitor` - tells the Prometheus Operator to scrape `/metrics`
+  automatically (requires kube-prometheus-stack; disable with
+  `--set serviceMonitor.enabled=false`)
+- `ConfigMap` - provisions the Grafana dashboard via sidecar auto-discovery
+  (requires kube-prometheus-stack; disable with
+  `--set grafanaDashboard.enabled=false`)
+- `Ingress` - routes external traffic (disabled by default)
 
 **Common Helm commands:**
 
