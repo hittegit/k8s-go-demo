@@ -1,0 +1,17 @@
+extends: default
+
+rules:
+  # Infrastructure YAML files (Helm values, monitoring configs) rarely use
+  # a document-start marker; requiring it adds noise without value here.
+  document-start: disable
+
+  # GitHub Actions uses "on:" as a map key. check-keys: false prevents
+  # yamllint from flagging it as a YAML 1.1 truthy value.
+  truthy:
+    allowed-values: ['true', 'false']
+    check-keys: false
+
+  # 80 chars is too tight for Helm values and workflow steps; 120 is
+  # reasonable without sacrificing readability.
+  line-length:
+    max: 120

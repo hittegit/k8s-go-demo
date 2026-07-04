@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.3.0] - 2026-07-02
+
+### Added
+
+- OpenTelemetry Collector, receiving OTLP traces from go-demo and
+  forwarding them to Grafana Tempo
+- Grafana Tempo (single-binary mode), wired into Grafana as a datasource
+  so traces are queryable in the same UI as Prometheus metrics
+- `OTEL_EXPORTER_OTLP_ENDPOINT` env var on the go-demo Deployment,
+  pointing at the in-cluster collector by default
+- `TESTING.md`: end-to-end testing guide covering unit tests, local
+  server, container, Kubernetes, and full observability stack verification
+- `.yamllint.yaml`: yamllint configuration with project-appropriate rules
+  (no document-start requirement, 120-char line limit, GitHub Actions
+  `on:` key allowed)
+- Unit tests for exact root handler response body and Prometheus counter
+  increments per handler, enforcing the coding standard that every
+  handler must increment `httpRequestsTotal`
+
+### Fixed
+
+- README project structure section now accurately reflects the codebase,
+  including `tracing.go`, `monitoring/`, and `charts/go-demo/dashboards/`
+- README Helm Chart section now correctly describes the `ServiceMonitor`
+  and Grafana dashboard `ConfigMap` resources and their opt-in flags
+- `ci.yml` indentation normalized to consistent 2-space throughout;
+  trailing spaces removed
+- `markdownlint` configuration now exempts tables and code blocks from
+  the 80-character line-length rule
+
 ## [0.2.0] - 2026-06-28
 
 ### Added

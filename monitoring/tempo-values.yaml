@@ -1,0 +1,28 @@
+# tempo-values.yaml
+#
+# Override values for the grafana/tempo (single-binary mode) chart,
+# sized for a local minikube cluster. Receives traces exported by the
+# OpenTelemetry Collector and serves them to Grafana via its query API
+# (port 3200), wired up as a Grafana datasource in
+# kube-prometheus-stack-values.yaml.
+#
+# Install with:
+#   helm install tempo grafana/tempo \
+#     --namespace monitoring --create-namespace \
+#     -f monitoring/tempo-values.yaml
+
+tempo:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  # Demo-only retention; traces don't need to survive long here.
+  retention: 24h
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  size: 2Gi

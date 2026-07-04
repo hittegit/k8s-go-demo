@@ -5,3 +5,9 @@
 # duplicate headings within the same section.
 MD024:
   siblings_only: true
+
+# Table cells and code blocks frequently exceed 80 chars; wrapping either
+# breaks readability or copy-paste usability.
+MD013:
+  tables: false
+  code_blocks: false

@@ -4,7 +4,8 @@
 # sized for a local minikube cluster rather than production.
 #
 # Install with:
-#   helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+#   helm install kube-prometheus-stack \
+#     prometheus-community/kube-prometheus-stack \
 #     --namespace monitoring --create-namespace \
 #     -f monitoring/kube-prometheus-stack-values.yaml
 
@@ -41,6 +42,12 @@ grafana:
       # go-demo's dashboard ConfigMap lives in the `demo` namespace, not
       # the monitoring stack's namespace.
       searchNamespace: ALL
+  additionalDataSources:
+    - name: Tempo
+      type: tempo
+      access: proxy
+      url: http://tempo.monitoring.svc.cluster.local:3200
+      isDefault: false
   resources:
     requests:
       cpu: 50m

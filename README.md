@@ -55,13 +55,20 @@ using a minimal Go HTTP service as the application under deployment. It covers:
     k8s-go-demo/
       cmd/
         server/
-          main.go         - HTTP server entry point
-          main_test.go    - Unit tests
+          main.go         - HTTP server, /health, /, /metrics endpoints
+          main_test.go    - Unit tests using net/http/httptest
+          tracing.go      - OpenTelemetry TracerProvider setup
       charts/
         go-demo/
           Chart.yaml      - Helm chart metadata
           values.yaml     - Default chart values
+          dashboards/
+            go-demo.json  - Grafana dashboard, provisioned via ConfigMap
           templates/      - Kubernetes manifest templates
+      monitoring/
+        kube-prometheus-stack-values.yaml - Prometheus and Grafana, sized for minikube
+        otel-collector-values.yaml        - OTel Collector, forwards traces to Tempo
+        tempo-values.yaml                 - Tempo trace storage, sized for minikube
       Dockerfile          - Multi-stage container build
       README.md
 
@@ -95,8 +102,13 @@ Kubernetes resources:
 
 - `Deployment` - runs the Go service with configurable replicas
 - `Service` - exposes the deployment within the cluster
-- `ConfigMap` - injects environment configuration
-- `Ingress` - routes external traffic (optional)
+- `ServiceMonitor` - tells the Prometheus Operator to scrape `/metrics`
+  automatically (requires kube-prometheus-stack; disable with
+  `--set serviceMonitor.enabled=false`)
+- `ConfigMap` - provisions the Grafana dashboard via sidecar auto-discovery
+  (requires kube-prometheus-stack; disable with
+  `--set grafanaDashboard.enabled=false`)
+- `Ingress` - routes external traffic (disabled by default)
 
 **Common Helm commands:**
 
@@ -144,6 +156,38 @@ when installing go-demo into a cluster without it.
 
     kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
     # http://localhost:9090
+
+### Tracing
+
+go-demo exports OpenTelemetry traces via OTLP/HTTP to an
+[OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector),
+which forwards them to [Grafana Tempo](https://github.com/grafana/helm-charts/tree/main/charts/tempo).
+Both run in the `monitoring` namespace and are wired into Grafana as a
+datasource automatically:
+
+    helm install tempo grafana/tempo \
+      --namespace monitoring --create-namespace \
+      -f monitoring/tempo-values.yaml
+
+    helm install otel-collector open-telemetry/opentelemetry-collector \
+      --namespace monitoring --create-namespace \
+      -f monitoring/otel-collector-values.yaml
+
+The go-demo chart points `OTEL_EXPORTER_OTLP_ENDPOINT` at the in-cluster
+collector by default (`otel.endpoint` in `values.yaml`); set it to `""`
+when installing into a cluster without the collector.
+
+View traces in Grafana under Explore, with the Tempo datasource selected,
+or query Tempo's search API directly:
+
+    kubectl port-forward -n monitoring svc/tempo 3200:3200
+    curl "http://localhost:3200/api/search?tags=service.name%3Dk8s-go-demo"
+
+> The `grafana/tempo` chart (single-binary mode) is marked deprecated
+> upstream in favor of `tempo-distributed` (microservices mode). For a
+> single local minikube cluster the single-binary chart is still the
+> right level of complexity; revisit if this ever needs to scale beyond
+> a demo.
 
 ---
 
