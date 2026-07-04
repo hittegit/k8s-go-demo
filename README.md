@@ -21,6 +21,7 @@ Prometheus, and Grafana observability.
 - [Observability](#observability)
 - [CI/CD Pipeline](#cicd-pipeline)
 - [Testing](#testing)
+- [Teardown](#teardown)
 - [Contributing](#contributing)
 
 ---
@@ -214,6 +215,22 @@ pull request.
 
 > Pipeline status badges are shown at the top of this README. They will
 > activate once the workflow files are committed and a pipeline run completes.
+
+## Teardown
+
+Uninstall in reverse dependency order, then stop minikube:
+
+    helm uninstall go-demo -n demo
+    helm uninstall otel-collector -n monitoring
+    helm uninstall tempo -n monitoring
+    helm uninstall kube-prometheus-stack -n monitoring
+    minikube stop
+
+To wipe the cluster entirely for a clean slate:
+
+    minikube delete
+
+---
 
 ## License
 
