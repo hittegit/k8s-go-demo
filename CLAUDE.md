@@ -167,6 +167,8 @@ k8s-go-demo/
     workflows/
       ci.yml          - Lint, vet, test, build, Docker build, Helm lint,
                         govulncheck, yardstick, syft SBOM
+  scripts/
+    demo-setup.sh   - brings up the full demo environment (minikube, Helm, port-forwards)
   Dockerfile
   go.mod
   go.sum
