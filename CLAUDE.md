@@ -128,11 +128,8 @@ Confirmation gate - type `YES` to continue, otherwise abort.
    git push origin vX.Y.Z
    ```
 
-4. Create the GitHub release (no release.yml workflow yet - manual step):
-
-   ```bash
-   gh release create vX.Y.Z --title "vX.Y.Z" --notes "<release notes>"
-   ```
+4. The CD workflow (`cd.yml`) triggers automatically on the tag push,
+   builds and pushes the Docker image to GHCR, and creates the GitHub Release.
 
 5. Update CHANGELOG.md: promote `[Unreleased]` to the new version and date.
 
@@ -167,6 +164,7 @@ k8s-go-demo/
     workflows/
       ci.yml          - Lint, vet, test, build, Docker build, Helm lint,
                         govulncheck, yardstick, syft SBOM
+      cd.yml          - Build and push image to GHCR, create GitHub Release
   scripts/
     demo-setup.sh    - brings up the full demo environment (minikube, Helm, port-forwards)
     demo-teardown.sh - tears down all Helm releases, namespaces, and stops minikube
@@ -295,4 +293,4 @@ helm lint charts/go-demo
 
 ## Upcoming Work
 
-- Add GitHub Actions CD workflow
+- No pending items.
