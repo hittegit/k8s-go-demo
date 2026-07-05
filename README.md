@@ -206,15 +206,12 @@ Tests use only the standard library `net/http/httptest` package and cover:
 
 ## CI/CD Pipeline
 
-Pipelines are defined in `.github/workflows/` and run on every push and
-pull request.
+Pipelines are defined in `.github/workflows/`.
 
-| Workflow | Trigger  | Steps                                       |
-|----------|----------|---------------------------------------------|
-| `ci.yml` | Push, PR | Lint, vet, test, build, Docker, Helm lint   |
-
-> Pipeline status badges are shown at the top of this README. They will
-> activate once the workflow files are committed and a pipeline run completes.
+| Workflow | Trigger     | Steps                                                 |
+|----------|-------------|-------------------------------------------------------|
+| `ci.yml` | Push, PR    | Lint, vet, test, build, Docker build, Helm lint, SBOM |
+| `cd.yml` | Version tag | Build and push image to GHCR, create GitHub Release   |
 
 ## Teardown
 
