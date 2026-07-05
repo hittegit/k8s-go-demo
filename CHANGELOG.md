@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.0] - 2026-07-05
+
+### Added
+
+- GitHub Actions CD workflow (`cd.yml`): triggers on version tags, builds and
+  pushes the Docker image to GHCR (tagged with semver version and `latest`),
+  and creates the GitHub Release with auto-generated notes
+- `scripts/demo-setup.sh`: idempotent script that starts minikube, installs
+  all Helm releases, builds and loads the Docker image, and starts port-forwards
+- `scripts/demo-teardown.sh`: companion teardown script with `--delete-cluster`
+  flag to stop or wipe the minikube environment
+
+### Fixed
+
+- Tempo OOMKill (`exit 137`): increased memory limit from 256Mi to 1Gi,
+  resolving a CrashLoopBackOff caused by WAL block compaction at startup
+- README and CLAUDE.md updated to reflect complete CI/CD loop; push_code
+  release workflow updated to reflect automated release creation via CD
+
 ## [0.3.0] - 2026-07-02
 
 ### Added
