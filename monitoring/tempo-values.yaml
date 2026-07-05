@@ -15,10 +15,10 @@ tempo:
   resources:
     requests:
       cpu: 50m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 200m
-      memory: 256Mi
+      memory: 1Gi
   # Demo-only retention; traces don't need to survive long here.
   retention: 24h
 
