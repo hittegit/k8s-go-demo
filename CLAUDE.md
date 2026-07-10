@@ -126,18 +126,25 @@ Confirmation gate - type `YES` to continue, otherwise abort.
 
 2. Select next version (`vX.Y.Z`) based on merged scope (patch/minor/major).
 
-3. Create and push an annotated tag:
+3. Update `CHANGELOG.md` and `charts/go-demo/Chart.yaml` (both `version`
+   and `appVersion`) to the new version, then commit directly to `main`:
+
+   ```bash
+   git add CHANGELOG.md charts/go-demo/Chart.yaml
+   git commit -m "docs: update CHANGELOG and Chart.yaml for vX.Y.Z"
+   git push origin main
+   ```
+
+4. Create and push an annotated tag:
 
    ```bash
    git tag -a vX.Y.Z -m "Release vX.Y.Z"
    git push origin vX.Y.Z
    ```
 
-4. The CD workflow (`cd.yml`) triggers automatically on the tag push,
+5. The CD workflow (`cd.yml`) triggers automatically on the tag push,
    builds and signs the Docker image with Cosign, pushes it to GHCR,
    creates the GitHub Release, and publishes the Helm chart to GitHub Pages.
-
-5. Update CHANGELOG.md: promote `[Unreleased]` to the new version and date.
 
 ---
 
