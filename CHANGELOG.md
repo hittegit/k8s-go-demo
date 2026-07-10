@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0] - 2026-07-10
+
+### Added
+
+- Trivy container image vulnerability scan added to the `build` CI job;
+  fails on CRITICAL or HIGH severity findings, uploads report as artifact
+- Coverage threshold enforcement in the `test` CI job; fails if total
+  unit test coverage drops below 30%
+- `setupTracing` unit test to cover OTel TracerProvider initialization
+- Helm chart published to GitHub Pages chart repository via
+  `helm/chart-releaser-action` on every release tag
+- Cosign keyless image signing in CD pipeline; signs the image digest
+  using GitHub Actions OIDC — no stored keys
+
+### Fixed
+
+- `Chart.yaml` version and appVersion synced to match app version;
+  boilerplate comments removed
+
 ## [1.0.2] - 2026-07-10
 
 ### Fixed
