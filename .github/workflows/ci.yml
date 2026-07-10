@@ -110,7 +110,9 @@ jobs:
         run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Generate SBOM
-        run: syft . --output cyclonedx-json --source-name k8s-go-demo --source-version $(git describe --tags --always) > sbom.json
+        run: |
+          VERSION=$(git describe --tags --always)
+          syft . --output cyclonedx-json --source-name k8s-go-demo --source-version "$VERSION" > sbom.json
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
