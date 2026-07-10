@@ -69,25 +69,24 @@ Issue -> Feature Branch -> Pull Request -> CI -> Merge -> Tag -> Release
 ### `/push_code update`
 
 1. Abort if on `main`.
-2. Run local tests: `go test -race ./...`
+2. Run all local validations; hard abort on any failure:
+
+   ```bash
+   go test -race ./...
+   go vet ./...
+   gofmt -l ./cmd/server
+   markdownlint '*.md'
+   yamllint .github/workflows/*.yml .markdownlint.yaml .yamllint.yaml monitoring/*.yaml charts/go-demo/values.yaml
+   helm lint charts/go-demo
+   ```
+
 3. Show working changes (`git status --short`, `git diff --stat`).
 4. Propose a Conventional Commit message and wait for explicit approval.
 5. Commit and push only after approval.
 
 ### `/push_code ready`
 
-Run all validations; hard abort on any failure:
-
-```bash
-go test -race ./...
-go vet ./...
-gofmt -l ./cmd/server
-markdownlint '*.md'
-yamllint .github/workflows/*.yml .markdownlint.yaml .yamllint.yaml monitoring/*.yaml charts/go-demo/values.yaml
-helm lint charts/go-demo
-```
-
-If all pass, mark the PR ready for review:
+All validations already ran in the `update` step. Mark the PR ready for review:
 
 ```bash
 gh pr ready
