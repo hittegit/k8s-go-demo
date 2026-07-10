@@ -97,11 +97,16 @@ gh pr ready
 
 Confirmation gate - type `YES` to continue, otherwise abort.
 
-1. Verify all PR checks are green:
+1. Verify all PR checks are green. Hard abort if any check is failing or
+   pending:
 
    ```bash
    gh pr checks
    ```
+
+   Do not proceed unless every check shows `pass`. If any check is failing,
+   diagnose and fix before merging. If checks are still running, wait and
+   re-run `gh pr checks` until all are complete.
 
 2. Squash merge and delete branch:
 
