@@ -4,7 +4,7 @@
 # Stage 1 compiles the binary; Stage 2 runs it on a minimal base.
 
 # ---- Build Stage ----
-FROM golang:1.25-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
