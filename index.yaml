@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  go-demo:
+  - apiVersion: v2
+    appVersion: 1.0.2
+    created: "2026-07-10T07:34:45.404860313Z"
+    description: Go HTTP service with Prometheus, Grafana, and OpenTelemetry observability
+    digest: 4844460b2a203abe393a46b1e620cef59a63158b7aee9a24f0515719efedbca9
+    name: go-demo
+    type: application
+    urls:
+    - https://github.com/hittegit/k8s-go-demo/releases/download/go-demo-1.0.2/go-demo-1.0.2.tgz
+    version: 1.0.2
+generated: "2026-07-10T07:34:45.404867546Z"
