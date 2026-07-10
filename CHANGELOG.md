@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.2] - 2026-07-10
+
+### Fixed
+
+- Replaced `anchore/sbom-action/download-syft` JavaScript action with a
+  direct `curl` install of the syft binary, eliminating the Node 20
+  deprecation warning
+- Switched syft flags from `--name`/`--version` (removed in v1.x) to
+  `--source-name`/`--source-version`
+
+### Added
+
+- yamllint and markdownlint steps added to the `lint-and-vet` CI job,
+  enforcing YAML and Markdown linting in every push and pull request
+
 ## [1.0.1] - 2026-07-09
 
 ### Fixed
