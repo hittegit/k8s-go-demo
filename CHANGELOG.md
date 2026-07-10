@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.1] - 2026-07-10
+
+### Fixed
+
+- `Chart.yaml` version and appVersion synced to `1.1.0` following the v1.1.0
+  release; release workflow updated to bump Chart.yaml as part of every release
+- Disabled MD060 table alignment rule in markdownlint config; wide tables
+  cannot be meaningfully aligned
+- Corrected DEMO_SCRIPT Helm chart section to reference `Chart.yaml` and
+  `templates/` instead of the Grafana dashboard JSON
+
 ## [1.1.0] - 2026-07-10
 
 ### Added
