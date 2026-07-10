@@ -18,7 +18,7 @@ Erik Hitt - Platform and DevOps Engineer
 
 ## Tech Stack
 
-- **Language:** Go 1.25
+- **Language:** Go 1.26
 - **Container:** Docker, multi-stage build, scratch base image
 - **Orchestration:** Kubernetes via minikube (local)
 - **Packaging:** Helm 3
@@ -69,9 +69,10 @@ Issue -> Feature Branch -> Pull Request -> CI -> Merge -> Tag -> Release
 ### `/push_code update`
 
 1. Abort if on `main`.
-2. Show working changes (`git status --short`, `git diff --stat`).
-3. Propose a Conventional Commit message and wait for explicit approval.
-4. Commit and push only after approval.
+2. Run local tests: `go test -race ./...`
+3. Show working changes (`git status --short`, `git diff --stat`).
+4. Propose a Conventional Commit message and wait for explicit approval.
+5. Commit and push only after approval.
 
 ### `/push_code ready`
 

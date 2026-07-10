@@ -43,7 +43,7 @@ using a minimal Go HTTP service as the application under deployment. It covers:
 
 ## Prerequisites
 
-- [Go 1.25+](https://go.dev/dl/)
+- [Go 1.26+](https://go.dev/dl/)
 - [Docker](https://docs.docker.com/get-docker/)
 - [minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
