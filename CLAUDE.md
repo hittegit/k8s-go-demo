@@ -18,7 +18,7 @@ Erik Hitt - Platform and DevOps Engineer
 
 ## Tech Stack
 
-- **Language:** Go 1.25
+- **Language:** Go 1.26
 - **Container:** Docker, multi-stage build, scratch base image
 - **Orchestration:** Kubernetes via minikube (local)
 - **Packaging:** Helm 3
