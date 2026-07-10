@@ -6,6 +6,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -107,4 +108,20 @@ func TestRootHandlerIncrementsCounter(t *testing.T) {
 	if after-before != 1 {
 		t.Errorf("counter delta = %v, want 1", after-before)
 	}
+}
+
+// TestSetupTracing verifies that setupTracing initializes without error
+// and returns a valid shutdown function. The OTLP exporter is lazy and
+// does not connect until the first export, so no collector is needed.
+func TestSetupTracing(t *testing.T) {
+	ctx := context.Background()
+	shutdown, err := setupTracing(ctx)
+	if err != nil {
+		t.Fatalf("setupTracing returned error: %v", err)
+	}
+	if shutdown == nil {
+		t.Fatal("expected non-nil shutdown function")
+	}
+	// Shutdown may fail if no collector is running; that is expected in unit tests.
+	_ = shutdown(ctx)
 }
