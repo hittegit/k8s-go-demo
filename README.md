@@ -208,10 +208,10 @@ Tests use only the standard library `net/http/httptest` package and cover:
 
 Pipelines are defined in `.github/workflows/`.
 
-| Workflow | Trigger     | Steps                                                 |
-|----------|-------------|-------------------------------------------------------|
-| `ci.yml` | Push, PR    | Lint, vet, test, build, Docker build, Helm lint, SBOM |
-| `cd.yml` | Version tag | Build and push image to GHCR, create GitHub Release   |
+| Workflow | Trigger     | Steps                                                                         |
+|----------|-------------|-------------------------------------------------------------------------------|
+| `ci.yml` | Push, PR    | Lint, vet, yamllint, markdownlint, test (with coverage gate), build, Trivy scan, Helm lint, govulncheck, yardstick, SBOM |
+| `cd.yml` | Version tag | Build, sign image with Cosign, push to GHCR, create GitHub Release, publish Helm chart to GitHub Pages |
 
 ## Teardown
 

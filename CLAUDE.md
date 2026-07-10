@@ -134,7 +134,8 @@ Confirmation gate - type `YES` to continue, otherwise abort.
    ```
 
 4. The CD workflow (`cd.yml`) triggers automatically on the tag push,
-   builds and pushes the Docker image to GHCR, and creates the GitHub Release.
+   builds and signs the Docker image with Cosign, pushes it to GHCR,
+   creates the GitHub Release, and publishes the Helm chart to GitHub Pages.
 
 5. Update CHANGELOG.md: promote `[Unreleased]` to the new version and date.
 
@@ -167,9 +168,11 @@ k8s-go-demo/
     tempo-values.yaml                 - Tempo (single-binary), sized for minikube
   .github/
     workflows/
-      ci.yml          - Lint, vet, test, build, Docker build, Helm lint,
-                        govulncheck, yardstick, syft SBOM
-      cd.yml          - Build and push image to GHCR, create GitHub Release
+      ci.yml          - Lint, vet, yamllint, markdownlint, test with coverage
+                        gate, build, Trivy scan, Helm lint, govulncheck,
+                        yardstick, syft SBOM
+      cd.yml          - Build, Cosign sign, push image to GHCR, create
+                        GitHub Release, publish Helm chart to GitHub Pages
   scripts/
     demo-setup.sh    - brings up the full demo environment (minikube, Helm, port-forwards)
     demo-teardown.sh - tears down all Helm releases, namespaces, and stops minikube
@@ -265,10 +268,10 @@ kubectl scale deployment go-demo -n demo --replicas=1
 
 ## CI Pipeline Jobs
 
-- lint-and-vet - golangci-lint, gofmt, go vet
-- test - go test with race detector and coverage
+- lint-and-vet - golangci-lint, gofmt, go vet, yamllint, markdownlint
+- test - go test with race detector, coverage report, 30% threshold gate
 - vulnerability-scan - govulncheck
-- build - go build and Docker build
+- build - go build, Docker build, Trivy container image scan
 - helm-lint - helm lint
 - repo-hygiene - yardstick v0.4.0 strict mode
 - sbom - syft CycloneDX SBOM generation
