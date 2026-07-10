@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1] - 2026-07-09
+
+### Fixed
+
+- Removed `file_format: yaml` from `monitoring/otel-collector-values.yaml`;
+  opentelemetry-collector chart v0.162.0 added strict JSON Schema validation
+  that rejects the field as an unknown top-level property
+- Upgraded Go toolchain to 1.26.5 and updated all Go module dependencies;
+  resolves CVE GO-2026-5856 (ECH privacy leak in `crypto/tls`)
+
 ## [1.0.0] - 2026-07-05
 
 ### Added
