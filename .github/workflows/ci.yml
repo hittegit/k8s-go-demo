@@ -40,6 +40,19 @@ jobs:
         with:
           version: latest
 
+      - name: Install yamllint and markdownlint
+        run: |
+          pip install yamllint --quiet
+          npm install -g markdownlint-cli --silent
+
+      - name: yamllint
+        run: |
+          yamllint .github/workflows/*.yml .markdownlint.yaml \
+            .yamllint.yaml monitoring/*.yaml charts/go-demo/values.yaml
+
+      - name: markdownlint
+        run: markdownlint '*.md'
+
   test:
     name: Test
     runs-on: ubuntu-latest
