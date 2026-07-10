@@ -112,6 +112,24 @@ jobs:
       - name: Docker build
         run: docker build -t k8s-go-demo:ci .
 
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: k8s-go-demo:ci
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          output: trivy-report.txt
+
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
+          retention-days: 7
+
   sbom:
     name: SBOM
     runs-on: ubuntu-latest
